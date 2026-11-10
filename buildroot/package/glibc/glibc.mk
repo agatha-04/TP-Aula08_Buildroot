@@ -1,0 +1,218 @@
+################################################################################
+#
+# glibc
+#
+################################################################################
+
+# Generate version string using:
+#   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
+# When updating the version, please also update localedef
+GLIBC_VERSION = 2.44-57-g34106fee698c83eb0af71d4d0381e66b399be746
+GLIBC_SITE = https://gitlab.com/gnutools/glibc.git
+GLIBC_SITE_METHOD = git
+
+GLIBC_LICENSE = \
+	GPL-2.0+ (programs), \
+	LGPL-2.1+, BSD-2-Clause, BSD-3-Clause, BSL-1.0, FSFAP, ISC, other permissive licenses, public domain (library), \
+	LGPL-3.0+ (sysdeps/htl/raise.c, for Hurd only), \
+	GPL-3.0+ (scripts/move-if-change), \
+	GPL-3.0+ WITH Texinfo-exception (manual/texinfo.tex), \
+	GFDL-1.3-or-later (manual)
+GLIBC_LICENSE_FILES = COPYINGv2 COPYING.LESSERv2 COPYINGv3 LICENSES manual/fdl-1.3.texi
+GLIBC_CPE_ID_VENDOR = gnu
+
+# Extract the base version (e.g. 2.38) from GLIBC_VERSION in order to
+# allow proper matching with the CPE database.
+GLIBC_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(GLIBC_VERSION)))
+
+# Fixed by 2.44-26-gd6ff274313d79feb864cc10eb775b91c817a67e9
+GLIBC_IGNORE_CVES += CVE-2026-19542
+
+# Fixed by 2.44-29-g63b53df549451a5d69fcba6d7612ea99f517e8e3
+GLIBC_IGNORE_CVES += CVE-2026-19499
+
+# Fixed by 2.44-30-g6f9b2bfa500bf5d1cff5d990adfff4b71298dadd
+GLIBC_IGNORE_CVES += CVE-2026-77117
+
+# Fixed by 2.44-31-gcb61572ea3f773e1e1978f6c412cc36a30acdb0c
+GLIBC_IGNORE_CVES += CVE-2026-80489
+
+# Fixed by 2.44-39-g0b4e41fc51e6aba6216a908961b49b0622b47fa0
+GLIBC_IGNORE_CVES += CVE-2026-18374
+
+# Fixed by 2.44-48-g1f5026241027260e9280039698bca031484c82ad
+GLIBC_IGNORE_CVES += CVE-2026-8674
+
+# Fixed by 2.44-55-gc90398e00571476711792baacb6d92bd2a7b6891
+GLIBC_IGNORE_CVES += CVE-2026-89092
+
+# Fixed by 2.44-57-g34106fee698c83eb0af71d4d0381e66b399be746
+GLIBC_IGNORE_CVES += CVE-2026-97399
+
+# This CVE is considered as not being security issues by
+# upstream glibc:
+#  https://security-tracker.debian.org/tracker/CVE-2010-4756
+GLIBC_IGNORE_CVES += CVE-2010-4756
+
+# glibc is part of the toolchain so disable the toolchain dependency
+GLIBC_ADD_TOOLCHAIN_DEPENDENCY = NO
+
+# Before glibc is configured, we must have the first stage
+# cross-compiler and the kernel headers
+GLIBC_DEPENDENCIES = host-gcc-initial linux-headers host-bison host-gawk \
+	$(BR2_MAKE_HOST_DEPENDENCY) $(BR2_PYTHON3_HOST_DEPENDENCY)
+
+GLIBC_SUBDIR = build
+
+GLIBC_INSTALL_STAGING = YES
+
+# Thumb build is broken, build in ARM mode
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+GLIBC_EXTRA_CFLAGS += -marm
+endif
+
+# MIPS64 defaults to n32 so pass the correct -mabi if
+# we are using a different ABI. OABI32 is also used
+# in MIPS so we pass -mabi=32 in this case as well
+# even though it's not strictly necessary.
+ifeq ($(BR2_MIPS_NABI64),y)
+GLIBC_EXTRA_CFLAGS += -mabi=64
+else ifeq ($(BR2_MIPS_OABI32),y)
+GLIBC_EXTRA_CFLAGS += -mabi=32
+endif
+
+ifeq ($(BR2_ENABLE_DEBUG),y)
+GLIBC_EXTRA_CFLAGS += -g
+endif
+
+# glibc explicitly requires compile barriers between files
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
+GLIBC_EXTRA_CFLAGS += -fno-lto
+endif
+
+# The stubs.h header is not installed by install-headers, but is
+# needed for the gcc build. An empty stubs.h will work, as explained
+# in http://gcc.gnu.org/ml/gcc/2002-01/msg00900.html. The same trick
+# is used by Crosstool-NG.
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_GLIBC),y)
+define GLIBC_ADD_MISSING_STUB_H
+	mkdir -p $(STAGING_DIR)/usr/include/gnu
+	touch $(STAGING_DIR)/usr/include/gnu/stubs.h
+endef
+endif
+
+GLIBC_CONF_ENV = \
+	ac_cv_path_BASH_SHELL=/bin/$(if $(BR2_PACKAGE_BASH),bash,sh) \
+	libc_cv_forced_unwind=yes \
+	libc_cv_ssp=no
+
+# POSIX shell does not support localization, so remove the corresponding
+# syntax from ldd if bash is not selected.
+ifeq ($(BR2_PACKAGE_BASH),)
+define GLIBC_LDD_NO_BASH
+	$(SED) 's/$$"/"/g' $(@D)/elf/ldd.bash.in
+endef
+GLIBC_POST_PATCH_HOOKS += GLIBC_LDD_NO_BASH
+endif
+
+# Override the default library locations of /lib64/<abi> and
+# /usr/lib64/<abi>/ for RISC-V.
+ifeq ($(BR2_riscv),y)
+ifeq ($(BR2_RISCV_64),y)
+GLIBC_CONF_ENV += libc_cv_slibdir=/lib64 libc_cv_rtlddir=/lib
+else
+GLIBC_CONF_ENV += libc_cv_slibdir=/lib32 libc_cv_rtlddir=/lib
+endif
+endif
+
+# glibc requires make >= 4.0 since 2.28 release.
+# https://www.sourceware.org/ml/libc-alpha/2018-08/msg00003.html
+GLIBC_MAKE = $(BR2_MAKE)
+GLIBC_CONF_ENV += ac_cv_prog_MAKE="$(BR2_MAKE)"
+
+ifeq ($(BR2_PACKAGE_GLIBC_KERNEL_COMPAT),)
+GLIBC_CONF_OPTS += --enable-kernel=$(call qstrip,$(BR2_TOOLCHAIN_HEADERS_AT_LEAST))
+endif
+
+# Even though we use the autotools-package infrastructure, we have to
+# override the default configure commands for several reasons:
+#
+#  1. We have to build out-of-tree, but we can't use the same
+#     'symbolic link to configure' used with the gcc packages.
+#
+#  2. We have to execute the configure script with bash and not sh.
+#
+# Glibc nowadays can be build with optimization flags f.e. -Os
+
+GLIBC_CFLAGS = $(TARGET_OPTIMIZATION)
+
+# glibc can't be built without optimization
+ifeq ($(BR2_OPTIMIZE_0),y)
+GLIBC_CFLAGS += -O1
+endif
+
+# glibc can't be built with Optimize for fast
+ifeq ($(BR2_OPTIMIZE_FAST),y)
+GLIBC_CFLAGS += -O2
+endif
+
+define GLIBC_CONFIGURE_CMDS
+	mkdir -p $(@D)/build
+	# Do the configuration
+	(cd $(@D)/build; \
+		$(TARGET_CONFIGURE_OPTS) \
+		CFLAGS="$(GLIBC_CFLAGS) $(GLIBC_EXTRA_CFLAGS)" CPPFLAGS="" \
+		CXXFLAGS="$(GLIBC_CFLAGS) $(GLIBC_EXTRA_CFLAGS)" \
+		$(GLIBC_CONF_ENV) \
+		$(SHELL) $(@D)/configure \
+		--target=$(GNU_TARGET_NAME) \
+		--host=$(GNU_TARGET_NAME) \
+		--build=$(GNU_HOST_NAME) \
+		--prefix=/usr \
+		--enable-shared \
+		$(if $(BR2_x86_64),--enable-lock-elision) \
+		--with-pkgversion="Buildroot" \
+		--disable-profile \
+		--disable-werror \
+		--without-gd \
+		--with-headers=$(STAGING_DIR)/usr/include \
+		$(if $(BR2_aarch64)$(BR2_aarch64_be),--enable-mathvec) \
+		$(GLIBC_CONF_OPTS))
+	$(GLIBC_ADD_MISSING_STUB_H)
+endef
+
+#
+# We also override the install to target commands since we only want
+# to install the libraries, and nothing more.
+#
+
+GLIBC_LIBS_LIB = \
+	ld*.so.* libanl.so.* libc.so.* libdl.so.* libgcc_s.so.* \
+	libm.so.* libpthread.so.* libresolv.so.* librt.so.* \
+	libutil.so.* libnss_files.so.* libnss_dns.so.* libmvec.so.*
+
+ifeq ($(BR2_PACKAGE_GDB),y)
+GLIBC_LIBS_LIB += libthread_db.so.*
+endif
+
+ifeq ($(BR2_PACKAGE_GLIBC_UTILS),y)
+GLIBC_TARGET_UTILS_USR_BIN = posix/getconf elf/ldd
+GLIBC_TARGET_UTILS_SBIN = elf/ldconfig
+ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
+GLIBC_TARGET_UTILS_USR_BIN += locale/locale
+endif
+endif
+
+define GLIBC_INSTALL_TARGET_CMDS
+	for libpattern in $(GLIBC_LIBS_LIB); do \
+		$(call copy_toolchain_lib_root,$$libpattern) ; \
+	done
+	$(foreach util,$(GLIBC_TARGET_UTILS_USR_BIN), \
+		$(INSTALL) -D -m 0755 $(@D)/build/$(util) $(TARGET_DIR)/usr/bin/$(notdir $(util))
+	)
+	$(foreach util,$(GLIBC_TARGET_UTILS_SBIN), \
+		$(INSTALL) -D -m 0755 $(@D)/build/$(util) $(TARGET_DIR)/sbin/$(notdir $(util))
+	)
+endef
+
+$(eval $(autotools-package))
