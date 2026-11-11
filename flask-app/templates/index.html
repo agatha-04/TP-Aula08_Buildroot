@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TP9 - Sensor Ultrassônico</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fa;
+      color: #102c50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 48px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #0002;
+      text-align: center;
+      min-width: 320px;
+    }
+    #distance {
+      font-size: 78px;
+      font-weight: bold;
+      color: #00868a;
+    }
+    .unit { font-size: 28px; }
+    #status { color: #667; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>TP9 - Distância Ultrassônica</h1>
+    <div>
+      <span id="distance">--.-</span>
+      <span class="unit">cm</span>
+    </div>
+    <div id="status">Aguardando sensor...</div>
+  </div>
+  <script>
+    async function updateDistance() {
+      const status = document.querySelector("#status");
+      try {
+        const response = await fetch("/api/distance", {cache: "no-store"});
+        const data = await response.json();
+        if (!data.ok) {
+          throw new Error(data.error || "erro de leitura");
+        }
+        document.querySelector("#distance").textContent =
+          Number(data.distance_cm).toFixed(1);
+        status.textContent = "Sensor OK";
+      } catch (err) {
+        status.textContent = "Falha: " + err.message;
+      }
+    }
+    updateDistance();
+    setInterval(updateDistance, 500);
+  </script>
+</body>
+</html>
