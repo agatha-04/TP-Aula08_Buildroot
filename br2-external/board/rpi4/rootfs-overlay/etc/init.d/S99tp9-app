@@ -1,0 +1,45 @@
+#!/bin/sh
+
+IMAGE="tp9-distance:1.0"
+CONTAINER="tp9-distance"
+TAR="/opt/docker/tp9-distance.tar"
+
+wait_for() {
+    cmd="$1"
+    max="$2"
+    i=0
+    while ! sh -c "$cmd" >/dev/null 2>&1; do
+        i=$((i+1))
+        [ "$i" -ge "$max" ] && return 1
+        sleep 1
+    done
+    return 0
+}
+
+case "$1" in
+    start)
+        echo "[TP9] aguardando /dev/hcsr04..."
+        wait_for "test -e /dev/hcsr04" 20 || exit 1
+        echo "[TP9] aguardando Docker..."
+        wait_for "docker info" 40 || exit 1
+
+        if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+            echo "[TP9] carregando imagem Docker..."
+            docker load -i "$TAR" || exit 1
+        fi
+
+        if docker container inspect "$CONTAINER" >/dev/null 2>&1; then
+            docker start "$CONTAINER"
+        else
+            docker run -d \
+                --name "$CONTAINER" \
+                --restart unless-stopped \
+                --device=/dev/hcsr04:/dev/hcsr04 \
+                -p 80:5000 \
+                "$IMAGE"
+        fi
+        ;;
+    stop)
+        docker stop "$CONTAINER" >/dev/null 2>&1 || true
+        ;;
+esac
