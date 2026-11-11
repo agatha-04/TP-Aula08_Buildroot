@@ -2,4 +2,14 @@
 # Automatically generated file; DO NOT EDIT.
 #
 
-# No br2-external tree defined.
+config BR2_EXTERNAL_NAMES
+	string
+	default "TP9"
+
+config BR2_EXTERNAL_TP9_PATH
+	string
+	default "/home/azureuser/tp9-rpi4/br2-external"
+config BR2_EXTERNAL_TP9_VERSION
+	string
+	default "-gbff11871-dirty"
+

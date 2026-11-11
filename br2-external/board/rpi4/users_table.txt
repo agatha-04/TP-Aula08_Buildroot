@@ -1,0 +1,3 @@
+# Usuario personalizado do TP09
+
+GRUPO05 -2 GRUPO05 -2 $6$q1q39wtrQsoYqo7O$18z7V0ixgOfGwttHlEnhKJAxHgj5tIe8r2.SC3kqBlsMIrjX.m4VMZ8Mq0Ho7UC/EHxCvj9b99VxLRmr7oyZ8/ /home/azureuser/tp9-rpi4/br2-external/board/rpi4 /bin/sh - Usuario do TP9
