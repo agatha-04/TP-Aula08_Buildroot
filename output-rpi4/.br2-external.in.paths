@@ -11,5 +11,5 @@ config BR2_EXTERNAL_TP9_PATH
 	default "/home/azureuser/tp9-rpi4/br2-external"
 config BR2_EXTERNAL_TP9_VERSION
 	string
-	default "-gbff11871-dirty"
+	default "-g509b9ae9-dirty"
 

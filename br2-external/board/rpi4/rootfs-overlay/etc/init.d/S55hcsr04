@@ -1,0 +1,21 @@
+#!/bin/sh
+case "$1" in
+ start)
+ echo "[TP9] carregando hcsr04..."
+ modprobe hcsr04 || exit 1
+ i=0
+ while [ ! -e /dev/hcsr04 ]; do
+ i=$((i+1))
+ [ "$i" -ge 10 ] && {
+ echo "[TP9] /dev/hcsr04 não apareceu."
+ exit 1
+ }
+ sleep 1
+ done
+ chmod 666 /dev/hcsr04
+ echo "[TP9] /dev/hcsr04 pronto."
+ ;;
+ stop)
+ modprobe -r hcsr04 2>/dev/null || true
+ ;;
+esac

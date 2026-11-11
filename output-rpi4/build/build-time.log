@@ -1,0 +1,96 @@
+1794401382.024610663:start:download            : linux
+1794401417.913940687:end  :download            : linux
+1794401417.938751557:start:extract             : linux
+1794401433.735560899:end  :extract             : linux
+1794401433.759240273:start:patch               : linux
+1794401436.751030752:end  :patch               : linux
+1794401436.774171027:start:download            : host-skeleton
+1794401436.783705817:end  :download            : host-skeleton
+1794401436.809727089:start:extract             : host-skeleton
+1794401436.821633076:end  :extract             : host-skeleton
+1794401436.846019950:start:patch               : host-skeleton
+1794401436.866123828:end  :patch               : host-skeleton
+1794401436.890118002:start:configure           : host-skeleton
+1794401436.919226071:end  :configure           : host-skeleton
+1794401436.943768945:start:build               : host-skeleton
+1794401436.950049538:end  :build               : host-skeleton
+1794401436.974479412:start:install-host        : host-skeleton
+1794401436.997726587:end  :install-host        : host-skeleton
+1794401437.132636042:start:download            : skeleton-init-common
+1794401437.141196333:end  :download            : skeleton-init-common
+1794401437.166081206:start:extract             : skeleton-init-common
+1794401437.177894693:end  :extract             : skeleton-init-common
+1794401437.202625967:start:patch               : skeleton-init-common
+1794401437.223781244:end  :patch               : skeleton-init-common
+1794401437.247821819:start:configure           : skeleton-init-common
+1794401437.277015988:end  :configure           : skeleton-init-common
+1794401437.301152362:start:build               : skeleton-init-common
+1794401437.306689756:end  :build               : skeleton-init-common
+1794401437.331769229:start:install-staging     : skeleton-init-common
+1794401437.446731006:end  :install-staging     : skeleton-init-common
+1794401437.473484178:start:install-target      : skeleton-init-common
+1794401437.567174278:end  :install-target      : skeleton-init-common
+1794401437.744737988:start:download            : skeleton-init-sysv
+1794401437.758146274:end  :download            : skeleton-init-sysv
+1794401437.792912336:start:extract             : skeleton-init-sysv
+1794401437.813349215:end  :extract             : skeleton-init-sysv
+1794401437.839126887:start:patch               : skeleton-init-sysv
+1794401437.860624964:end  :patch               : skeleton-init-sysv
+1794401437.885833337:start:configure           : skeleton-init-sysv
+1794401437.917632603:end  :configure           : skeleton-init-sysv
+1794401437.944543675:start:build               : skeleton-init-sysv
+1794401437.950385268:end  :build               : skeleton-init-sysv
+1794401437.975115342:start:install-target      : skeleton-init-sysv
+1794401438.037461875:end  :install-target      : skeleton-init-sysv
+1794401438.172775031:start:download            : skeleton
+1794401438.183233520:end  :download            : skeleton
+1794401438.211095890:start:extract             : skeleton
+1794401438.224443776:end  :extract             : skeleton
+1794401438.253078145:start:patch               : skeleton
+1794401438.273979023:end  :patch               : skeleton
+1794401438.298595896:start:configure           : skeleton
+1794401438.328093065:end  :configure           : skeleton
+1794401438.352080339:start:build               : skeleton
+1794401438.357935733:end  :build               : skeleton
+1794401438.382749106:start:install-target      : skeleton
+1794401438.393245295:end  :install-target      : skeleton
+1794401438.516183264:start:download            : toolchain-external-bootlin
+1794401443.835900682:end  :download            : toolchain-external-bootlin
+1794401443.867473948:start:extract             : toolchain-external-bootlin
+1794401454.714896092:end  :extract             : toolchain-external-bootlin
+1794401454.737947472:start:patch               : toolchain-external-bootlin
+1794401454.757482955:end  :patch               : toolchain-external-bootlin
+1794401454.782446033:start:configure           : toolchain-external-bootlin
+1794401455.157957602:end  :configure           : toolchain-external-bootlin
+1794401455.182589280:start:build               : toolchain-external-bootlin
+1794401455.397391691:end  :build               : toolchain-external-bootlin
+1794401455.422903268:start:install-staging     : toolchain-external-bootlin
+1794401456.426075384:end  :install-staging     : toolchain-external-bootlin
+1794401456.453044360:start:install-target      : toolchain-external-bootlin
+1794401456.960523112:end  :install-target      : toolchain-external-bootlin
+1794401457.270973439:start:download            : toolchain-external
+1794401457.279814531:end  :download            : toolchain-external
+1794401457.302882711:start:extract             : toolchain-external
+1794401457.314412100:end  :extract             : toolchain-external
+1794401457.338007980:start:patch               : toolchain-external
+1794401457.358167162:end  :patch               : toolchain-external
+1794401457.382225841:start:configure           : toolchain-external
+1794401457.455850576:end  :configure           : toolchain-external
+1794401457.479264155:start:build               : toolchain-external
+1794401457.485043450:end  :build               : toolchain-external
+1794401457.509173029:start:install-target      : toolchain-external
+1794401457.519948119:end  :install-target      : toolchain-external
+1794401457.686599172:start:download            : toolchain
+1794401457.696809763:end  :download            : toolchain
+1794401457.722918540:start:extract             : toolchain
+1794401457.735440129:end  :extract             : toolchain
+1794401457.759848608:start:patch               : toolchain
+1794401457.781003689:end  :patch               : toolchain
+1794401457.806376567:start:configure           : toolchain
+1794401457.879999102:end  :configure           : toolchain
+1794401457.904068381:start:build               : toolchain
+1794401457.909678076:end  :build               : toolchain
+1794401457.934628654:start:install-staging     : toolchain
+1794401457.999798496:end  :install-staging     : toolchain
+1794401458.027104672:start:install-target      : toolchain
+1794401458.041987659:end  :install-target      : toolchain

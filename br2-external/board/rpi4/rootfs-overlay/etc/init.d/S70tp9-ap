@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case "$1" in
+
+ start)
+echo "[TP9] configurando wlan0..."
+ip link set wlan0 up
+ ip addr flush dev wlan0
+ ip addr add 192.168.50.1/24 dev wlan0
+echo "[TP9] iniciando hostapd..."
+ hostapd -B /etc/hostapd.conf || exit 1
+echo "[TP9] iniciando dnsmasq..."
+dnsmasq --conf-file=/etc/dnsmasq.conf || exit 1
+;;
+stop)
+
+killall dnsmasq 2>/dev/null || true
+killall hostapd 2>/dev/null || true
+;;
+esac
