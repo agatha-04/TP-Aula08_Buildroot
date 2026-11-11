@@ -1,0 +1,32 @@
+
+# Buildroot - arquivos gerados pela compilação
+/output-rpi4/
+
+# Imagens e arquivos de compilação
+*.img
+*.img.gz
+*.log
+*.tmp
+
+# Arquivos temporários
+*~
+*.swp
+*.bak
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Variáveis de ambiente e configurações locais
+.env
+
+# Editores
+.vscode/
+.idea/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
